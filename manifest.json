@@ -1,0 +1,23 @@
+{
+  "id": "./index.html",
+  "name": "운동 체크 - 64빌딩 루틴",
+  "short_name": "운동체크",
+  "description": "루틴 완료 체크, 소모 칼로리 계산, 통계 및 체중 목표 관리",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F2F9F4",
+  "theme_color": "#16A34A",
+  "lang": "ko",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "통계 보기", "short_name": "통계", "url": "./index.html#stats", "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }] },
+    { "name": "설정", "short_name": "설정", "url": "./index.html#settings", "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }] }
+  ]
+}
