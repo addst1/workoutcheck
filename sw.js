@@ -1,27 +1,29 @@
 // 운동 체크 서비스워커
 // - HTML(페이지 이동)은 네트워크 우선 → 항상 최신 버전, 오프라인이면 캐시
 // - 그 외 정적 파일은 캐시 우선 + 백그라운드 갱신
-// - 새 버전은 자동으로 덮어쓰지 않고, 앱에서 "업데이트"를 누르면 적용 (입력 중 화면이 튀지 않도록)
+// - 새 버전은 설치 즉시 적용되고, 화면은 자동으로 새로고침하지 않고 "새로고침" 토스트로 알려줌 (입력 중 화면이 튀지 않도록)
 // 앱 파일을 수정해서 배포할 때는 아래 VERSION 숫자를 올려주세요.
-const VERSION = "v3.2";
+const VERSION = "v3.3";
 const CACHE_NAME = "workout-check-" + VERSION;
 const ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./icon-192.png",
-  "./icon-512.png",
-  "./icon-maskable-512.png",
-  "./apple-touch-icon.png"
+  "./app-icon-192.png",
+  "./app-icon-512.png",
+  "./app-icon-maskable-512.png",
+  "./app-icon-180.png"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>
-      // 파일 하나가 없어도 전체 설치가 실패하지 않도록 개별로 추가
-      Promise.all(ASSETS.map((url) => cache.add(url).catch(() => {})))
+      // 파일 하나가 없어도 전체 설치가 실패하지 않도록 개별로 추가 (HTTP 캐시를 거치지 않고 새로 받음)
+      Promise.all(ASSETS.map((url) => cache.add(new Request(url, { cache: "reload" })).catch(() => {})))
     )
   );
+  // 새 버전은 설치 즉시 적용 (옛 캐시가 남아 옛 아이콘/화면이 보이는 문제 방지)
+  self.skipWaiting();
 });
 
 self.addEventListener("message", (event) => {

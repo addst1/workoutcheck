@@ -17,8 +17,8 @@ if(d)document.documentElement.setAttribute("data-theme","dark");}catch(e){}})();
 </script>
 <title>운동 체크</title>
 <link rel="manifest" href="./manifest.json">
-<link rel="icon" type="image/png" href="./icon-192.png">
-<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="icon" type="image/png" href="./app-icon-192.png">
+<link rel="apple-touch-icon" href="./app-icon-180.png">
 <style>
 :root{
   --bg:#F2F9F4; --bg2:#E6F4EB; --card:#FFFFFF; --card2:#EDF7F0;
@@ -315,7 +315,7 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
 <body>
 <header class="top">
   <div class="brand">
-    <img class="logo" src="./icon-192.png" alt="" width="40" height="40">
+    <img class="logo" src="./app-icon-192.png" alt="" width="40" height="40">
     <div>
       <h1 id="headerTitle">오늘의 운동</h1>
       <div class="date" id="todayLabel"></div>
@@ -748,7 +748,7 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
   // ====================================================================
   //  앱 로직
   // ====================================================================
-  var APP_VERSION = "3.2";
+  var APP_VERSION = "3.3";
   var $ = function(id){ return document.getElementById(id); };
   function esc(v){
     return String(v == null ? "" : v).replace(/[&<>"']/g, function(c){
@@ -2044,23 +2044,18 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
 
   // ---------- 서비스워커 + 업데이트 알림 ----------
   if("serviceWorker" in navigator){
+    var hadController = !!navigator.serviceWorker.controller;
     window.addEventListener("load", function(){
       navigator.serviceWorker.register("./sw.js").then(function(reg){
-        function promptUpdate(worker){
-          toast("새 버전이 준비됐어요", "info", 10000, {label:"업데이트", fn:function(){ worker.postMessage({type:"SKIP_WAITING"}); }});
-        }
-        if(reg.waiting && navigator.serviceWorker.controller) promptUpdate(reg.waiting);
-        reg.addEventListener("updatefound", function(){
-          var nw = reg.installing;
-          if(!nw) return;
-          nw.addEventListener("statechange", function(){
-            if(nw.state === "installed" && navigator.serviceWorker.controller) promptUpdate(nw);
-          });
-        });
+        // 예전 버전 서비스워커가 대기 중이면 바로 적용시킴
+        if(reg.waiting && navigator.serviceWorker.controller) reg.waiting.postMessage({type:"SKIP_WAITING"});
+        reg.update().catch(function(){});
       }).catch(function(){});
-      var reloading = false;
+      var notified = false;
       navigator.serviceWorker.addEventListener("controllerchange", function(){
-        if(reloading) return; reloading = true; location.reload();
+        if(!hadController){ hadController = true; return; }   // 첫 설치는 알릴 필요 없음
+        if(notified) return; notified = true;
+        toast("새 버전이 적용됐어요", "info", 12000, {label:"새로고침", fn:function(){ location.reload(); }});
       });
     });
   }
