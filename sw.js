@@ -3,7 +3,7 @@
 // - 그 외 정적 파일은 캐시 우선 + 백그라운드 갱신
 // - 새 버전은 설치 즉시 적용되고, 화면은 자동으로 새로고침하지 않고 "새로고침" 토스트로 알려줌 (입력 중 화면이 튀지 않도록)
 // 앱 파일을 수정해서 배포할 때는 아래 VERSION 숫자를 올려주세요.
-const VERSION = "v3.3";
+const VERSION = "v3.4";
 const CACHE_NAME = "workout-check-" + VERSION;
 const ASSETS = [
   "./",

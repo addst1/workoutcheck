@@ -13,7 +13,7 @@
 <script>
 (function(){try{var p=localStorage.getItem("wc_theme");if(p!=="dark"&&p!=="light")p="system";
 var d=p==="dark"||(p==="system"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches);
-if(d)document.documentElement.setAttribute("data-theme","dark");}catch(e){}})();
+if(d)document.documentElement.setAttribute("data-theme","dark");var m=document.querySelector('meta[name="color-scheme"]');if(m)m.setAttribute("content",p==="system"?"light dark":(d?"dark":"only light"));}catch(e){}})();
 </script>
 <title>운동 체크</title>
 <link rel="manifest" href="./manifest.json">
@@ -504,6 +504,7 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
         <button data-theme-pref="dark" role="radio">다크</button>
       </div>
       <div class="hint" id="themeHint" style="margin-top:2px"></div>
+      <div class="muted" id="themeDiag" style="margin-top:8px;line-height:1.6"></div>
     </div>
 
     <h2>백업 &amp; 복원</h2>
@@ -748,7 +749,7 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
   // ====================================================================
   //  앱 로직
   // ====================================================================
-  var APP_VERSION = "3.3";
+  var APP_VERSION = "3.4";
   var $ = function(id){ return document.getElementById(id); };
   function esc(v){
     return String(v == null ? "" : v).replace(/[&<>"']/g, function(c){
@@ -921,6 +922,12 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
       var on = b.dataset.themePref === pref;
       b.classList.toggle("active", on); b.setAttribute("aria-checked", on);
     });
+    var dg = $("themeDiag");
+    if(dg){
+      var standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || navigator.standalone;
+      dg.innerHTML = "감지된 기기 설정: <b>" + (mq && mq.matches ? "다크" : "라이트") + "</b> · 실행 방식: <b>" + (standalone ? "설치된 앱" : "브라우저 탭") + "</b><br>" +
+        "라이트/시스템인데 화면이 <b>검정에 가깝게</b> 어두워 보이면, 앱이 아니라 브라우저의 '웹페이지 강제 다크'가 켜진 거예요.";
+    }
     var h = $("themeHint"); if(h) h.textContent = THEME_HINT[pref] + (pref === "system" ? " (지금은 " + (dark ? "다크" : "라이트") + ")" : "");
   }
   if(mq){
